@@ -1,0 +1,33 @@
+[
+  {
+    "ingredients": ["lead", "mercury"],
+    "freeze": {
+      "0": "cold lead amalgalm",
+      "-10": "frozen lead amalgalm"
+    },
+    "boil": {
+      "1064": "gold",
+      "100": "hot lead amalgalm"
+    }
+  },
+  {
+    "ingredients": ["air", "water"],
+    "freeze": {
+      "-5": "snow",
+      "0": "ice"
+    },
+    "boil": {
+      "100": "steam"
+    }
+  },
+  {
+    "ingredients": ["cheese", "dough", "tomato"],
+    "freeze": {
+      "0": "ice cheese, dough and tomato",
+      "-5": "frozen cheese, dough and tomato"
+    },
+    "boil": {
+      "100": "pizza"
+    }
+  }
+]

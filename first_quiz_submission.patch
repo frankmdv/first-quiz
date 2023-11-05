@@ -1,0 +1,577 @@
+diff --git a/part1/question1.py b/part1/question1.py
+index 5c99fdb..f73035c 100644
+--- a/part1/question1.py
++++ b/part1/question1.py
+@@ -1,10 +1,10 @@
+ ################################################################################
+ #     ____                          __     _                          ___
+ #    / __ \  __  __  ___    _____  / /_   (_)  ____    ____          <  /
+-#   / / / / / / / / / _ \  / ___/ / __/  / /  / __ \  / __ \         / / 
+-#  / /_/ / / /_/ / /  __/ (__  ) / /_   / /  / /_/ / / / / /        / /  
+-#  \___\_\ \__,_/  \___/ /____/  \__/  /_/   \____/ /_/ /_/        /_/   
+-#                                                                        
++#   / / / / / / / / / _ \  / ___/ / __/  / /  / __ \  / __ \         / /
++#  / /_/ / / /_/ / /  __/ (__  ) / /_   / /  / /_/ / / / / /        / /
++#  \___\_\ \__,_/  \___/ /____/  \__/  /_/   \____/ /_/ /_/        /_/
++#
+ #  Question 1
+ ################################################################################
+ #
+@@ -13,23 +13,30 @@
+ # need to be fixed. The test suite in `question1_test.py` will verify the output.
+ # Read the test suite to know the values that these functions should return.
+ 
+-def get_city_temperature(city):
+-   if city == "Quito":
+-      return 22
+-   if city == "Sao Paulo":
+-      return 17
+-   if city == "San Francisco":
+-      return 16
+ 
+-def get_city_weather(city):
++def get_city_temperature(city: str):
++    try:
++        city_temperature = {
++            "Quito": 22,
++            "Sao Paulo": 17,
++            "San Francisco": 16,
++            "New York": 14,
++        }
++        return city_temperature[city]
++    except KeyError:
++        return None
++
+ 
+-  sky_condition = None
++def get_sky_condition(city: str):
++    try:
++        sky_conditions = {"Sao Paulo": "cloudy", "New York": "rainy", "Quito": "sunny"}
++        return sky_conditions[city]
++    except KeyError:
++        return None
+ 
+-  if city == "Sao Paulo":
+-     sky_condition = "cloudy"
+-  elif city == "New York":
+-     sky_condition = "rainy"
+ 
+-  temperature = get_city_temperature(city)
++def get_city_weather(city: str):
++    temperature = get_city_temperature(city)
++    sky_condition = get_sky_condition(city)
+ 
+-  return str(temperature) + " degrees and " + sky_condition
+\ No newline at end of file
++    return f"{temperature} degrees and {sky_condition}"
+diff --git a/part1/question2.py b/part1/question2.py
+index 34a9b01..883b36e 100644
+--- a/part1/question2.py
++++ b/part1/question2.py
+@@ -1,21 +1,28 @@
+ ################################################################################
+-#     ____                          __     _                          ___ 
++#     ____                          __     _                          ___
+ #    / __ \  __  __  ___    _____  / /_   (_)  ____    ____          |__ \
+ #   / / / / / / / / / _ \  / ___/ / __/  / /  / __ \  / __ \         __/ /
+-#  / /_/ / / /_/ / /  __/ (__  ) / /_   / /  / /_/ / / / / /        / __/ 
+-#  \___\_\ \__,_/  \___/ /____/  \__/  /_/   \____/ /_/ /_/        /____/ 
+-#                                                                         
++#  / /_/ / / /_/ / /  __/ (__  ) / /_   / /  / /_/ / / / / /        / __/
++#  \___\_\ \__,_/  \___/ /____/  \__/  /_/   \____/ /_/ /_/        /____/
++#
+ #  Question 2
+ ################################################################################
+ #
+ # Instructions:
+-# Write a function that will swap a tuple of two items. For example, the function 
+-# should change (x, y) into (y, x). 
++# Write a function that will swap a tuple of two items. For example, the function
++# should change (x, y) into (y, x).
+ # Assign the function to `swapper` so that the function `run_swapper(..)` can use
+-# it. As always, there is a test suite that checks the result. It is in 
++# it. As always, there is a test suite that checks the result. It is in
+ # `question2_test.py.`
+ 
+-swapper = None
++
++def swapper(items: tuple):
++    if not isinstance(items, tuple) or len(items) != 2:
++        return None
++
++    item_one, item_two = items
++    return (item_two, item_one)
++
+ 
+ def run_swapper(list_of_tuples):
+-  return list(map(swapper, list_of_tuples))
+\ No newline at end of file
++    return list(map(swapper, list_of_tuples))
+diff --git a/part1/question3.py b/part1/question3.py
+index 04fab99..9db7592 100644
+--- a/part1/question3.py
++++ b/part1/question3.py
+@@ -1,44 +1,165 @@
+ ################################################################################
+ #     ____                          __     _                          _____
+ #    / __ \  __  __  ___    _____  / /_   (_)  ____    ____          |__  /
+-#   / / / / / / / / / _ \  / ___/ / __/  / /  / __ \  / __ \          /_ < 
+-#  / /_/ / / /_/ / /  __/ (__  ) / /_   / /  / /_/ / / / / /        ___/ / 
+-#  \___\_\ \__,_/  \___/ /____/  \__/  /_/   \____/ /_/ /_/        /____/  
+-#                                                                          
++#   / / / / / / / / / _ \  / ___/ / __/  / /  / __ \  / __ \          /_ <
++#  / /_/ / / /_/ / /  __/ (__  ) / /_   / /  / /_/ / / / / /        ___/ /
++#  \___\_\ \__,_/  \___/ /____/  \__/  /_/   \____/ /_/ /_/        /____/
++#
+ #  Question 3
+ ################################################################################
+ #
+ # Instructions:
+-# Make a Python class for a magical oven that can combine ingredients at 
++# Make a Python class for a magical oven that can combine ingredients at
+ # different temperatures to craft special materials.
+-# 
++#
+ # The oven class should have the methods:
+ # - add(item) to add an oven to be combined
+ # - freeze() to freeze the ingredients
+ # - boil() to boil the ingredients
+ # - wait() to combine the ingredients with no change in temperature
+-# - get_output() to get the result 
++# - get_output() to get the result
+ #
+ # You will need to change the `make_oven()` function to return a new instance
+ # of your oven.
+ #
+-# The `alchemy_combine()` function will use your oven. You can see the expected 
++# The `alchemy_combine()` function will use your oven. You can see the expected
+ # formulas and their outputs in the test file, `question3_test.py`.
+ 
+-# This function should return an oven instance!
++import json
++
++# ¡FOR THIS EXERCISE, I WANTED TO MAKE A CODE DOCUMENTATION!
++
++
+ def make_oven():
+-  None
++    """
++    Return an oven instance
++
++    Returns
++    -------
++    Oven: An instance of Oven class
++    """
++    return Oven()
++
+ 
+ def alchemy_combine(oven, ingredients, temperature):
+-  
+-  for item in ingredients:
+-    oven.add(item)
+-
+-  if temperature < 0:
+-    oven.freeze()
+-  elif temperature >= 100:
+-    oven.boil()
+-  else:
+-    oven.wait()
+-
+-  return oven.get_output()
+\ No newline at end of file
++    for item in ingredients:
++        oven.add(item)
++
++    oven.temperature = temperature
++    return oven.get_output()
++
++
++class Oven:
++    def __init__(self):
++        self._ingredients = []
++        self._temperature = 20
++        self._output = None
++
++    @property
++    def temperature(self):
++        return self._temperature
++
++    @temperature.setter
++    def temperature(self, temperature):
++        self._temperature = temperature
++
++        if temperature < 0:
++            self._freeze()
++        elif temperature >= 100:
++            self._boil()
++        else:
++            self._wait()
++
++    def add(self, ingredient):
++        """
++        Add an ingredient to the oven
++
++        Parameters
++        ----------
++        ingredient : str
++            Element or ingredient to be added to the oven
++        """
++        self._ingredients.append(ingredient)
++
++    def _freeze(self):
++        """
++        Assigns to the output the result of the preparation by assigning as freeze state
++        """
++        self._output = self._get_preparation_state("freeze")
++
++    def _boil(self):
++        """
++        Assigns to the output the result of the preparation by assigning as boil state
++        """
++        self._output = self._get_preparation_state("boil")
++
++    def _wait(self):
++        """
++        Assigns to the output the result of the preparation by assigning as wait state
++        """
++        self._output = " + ".join(self._ingredients)
++
++    def get_output(self):
++        """
++        Returns the result of the recipe
++
++        Returns
++        -------
++        str: Recipe result
++        """
++        return self._output
++
++    def _get_preparation_state(self, state):
++        """
++        Searches for and returns the preparation of the
++        inserted ingredients from the state passed as an argument.
++
++        Parameters
++        ----------
++        state : str
++            State of preparation defined by oven temperature.
++
++        Returns
++        -------
++        str: The result of the preparation according to the ingredients and temperature.
++        None: This value is returned if the combination of ingredients entered is non-existent.
++        """
++        preparations_state = self._find_combination()
++
++        if not preparations_state:
++            return None
++
++        preparations_state = preparations_state[state]
++
++        temperature_comparator = (
++            lambda: self.temperature <= int(gr)
++            if state == "freeze"
++            else lambda: self.temperature >= int(gr)
++        )
++
++        grades = preparations_state.keys()
++
++        for gr in grades:
++            if temperature_comparator():
++                return preparations_state[gr]
++
++    def _find_combination(self):
++        """
++        Searches for the combination of ingredients inserted in the file
++        'recipes.json'.
++
++        Returns
++        -------
++        dict: Recipe ingredients and the results that can be obtained for each state.
++        None: This value is returned if the recipe does not exist in the file 'recipes.json'.
++        """
++        recipes = None
++        with open("recipes.json", "r") as f:
++            recipes = json.load(f)
++
++        ingredients_added_sorted = sorted(self._ingredients)
++
++        if recipes:
++            for rec in recipes:
++                if sorted(rec["ingredients"]) == ingredients_added_sorted:
++                    return rec
+diff --git a/part1/question3_test.py b/part1/question3_test.py
+index 6cb6c89..5bf468e 100644
+--- a/part1/question3_test.py
++++ b/part1/question3_test.py
+@@ -1,19 +1,9 @@
+-def test_alchemy_combine():
++from question3 import alchemy_combine, make_oven
++
+ 
+-  assert alchemy_combine(
+-    make_oven(),
+-    ["lead", "mercury"],
+-    5000
+-  ) == "gold"
++def test_alchemy_combine():
++    assert alchemy_combine(make_oven(), ["lead", "mercury"], 5000) == "gold"
+ 
+-  assert alchemy_combine(
+-    make_oven(),
+-    ["water", "air"],
+-    -100
+-  ) == "snow"
++    assert alchemy_combine(make_oven(), ["water", "air"], -100) == "snow"
+ 
+-  assert alchemy_combine(
+-    make_oven(),
+-    ["cheese", "dough", "tomato"],
+-    150
+-  ) == "pizza"
+\ No newline at end of file
++    assert alchemy_combine(make_oven(), ["cheese", "dough", "tomato"], 150) == "pizza"
+diff --git a/part1/question4.py b/part1/question4.py
+index 1e1b2bf..3dc830f 100644
+--- a/part1/question4.py
++++ b/part1/question4.py
+@@ -5,16 +5,16 @@ import pets_db
+ #    / __ \  __  __  ___    _____  / /_   (_)  ____    ____          / // /
+ #   / / / / / / / / / _ \  / ___/ / __/  / /  / __ \  / __ \        / // /_
+ #  / /_/ / / /_/ / /  __/ (__  ) / /_   / /  / /_/ / / / / /       /__  __/
+-#  \___\_\ \__,_/  \___/ /____/  \__/  /_/   \____/ /_/ /_/          /_/   
+-#                                                                          
++#  \___\_\ \__,_/  \___/ /____/  \__/  /_/   \____/ /_/ /_/          /_/
++#
+ #  Question 4
+ ################################################################################
+ #
+ # Instructions:
+-# Question 4 and Question 5 are about writing SQL. THey use the database that is 
+-# created in the file `pets_db.py`. 
++# Question 4 and Question 5 are about writing SQL. THey use the database that is
++# created in the file `pets_db.py`.
+ # These questions use a database called SQLite. You do not need to install anything.
+-# In the file `pets_db.py` three tables are created. Data is then added to each 
++# In the file `pets_db.py` three tables are created. Data is then added to each
+ # of the tables. The questions below are about how the data in each of the tables
+ # is related.
+ 
+@@ -23,26 +23,56 @@ import pets_db
+ # The output should be a list of tuples in the format: (<pet name>, <species>, <age>)
+ 
+ sql_pets_owned_by_nobody = """
+-
+-Your SQL here.
+-
++SELECT
++    name,
++    species,
++    age
++FROM animals
++EXCEPT
++SELECT 
++    name, 
++    species, 
++    age 
++FROM animals 
++INNER JOIN people_animals
++ON animals.animal_id = people_animals.pet_id;
+ """
+ 
+ # Part 4.B:
+-# Write SQL to select how the number of pets are older than their owners. 
++# Write SQL to select how the number of pets are older than their owners.
+ # The output should be an integer.
+ 
+ sql_pets_older_than_owner = """
+-
+-Your SQL here.
+-
++SELECT DISTINCT
++    COUNT(*)
++FROM animals 
++INNER JOIN people_animals
++ON animals.animal_id = people_animals.pet_id
++INNER JOIN people
++ON people_animals.owner_id = people.person_id
++WHERE animals.age > people.age;
+ """
+ 
+-# Part 4.C: BONUS CHALLENGE! 
++# Part 4.C: BONUS CHALLENGE!
+ # Write SQL to select the pets that are owned by Bessie and nobody else.
+ # The output should be a list of tuples in the format: (<person name>, <pet name>, <species>)
+-sql_only_owned_by_bessie = """ 
+-
+-Your SQL here.
+-
+-"""
+\ No newline at end of file
++sql_only_owned_by_bessie = """
++SELECT 
++    people.name,
++    an.name,
++    an.species
++FROM animals AS an
++INNER JOIN people_animals
++ON an.animal_id = people_animals.pet_id
++INNER JOIN people 
++ON people_animals.owner_id = people.person_id
++WHERE people.name = 'bessie'
++AND
++(SELECT 
++    COUNT(*)
++ FROM animals AS an2
++ INNER JOIN people_animals
++ ON an2.animal_id = people_animals.pet_id
++ WHERE people_animals.pet_id = an.animal_id) = 1;
++"""
++# WHERE an2.animal_id = an.animal_id
+diff --git a/part1/question5.py b/part1/question5.py
+index f76654f..b36cebc 100644
+--- a/part1/question5.py
++++ b/part1/question5.py
+@@ -1,15 +1,15 @@
+ ################################################################################
+ #     ____                          __     _                           ______
+ #    / __ \  __  __  ___    _____  / /_   (_)  ____    ____           / ____/
+-#   / / / / / / / / / _ \  / ___/ / __/  / /  / __ \  / __ \         /___ \  
+-#  / /_/ / / /_/ / /  __/ (__  ) / /_   / /  / /_/ / / / / /        ____/ /  
+-#  \___\_\ \__,_/  \___/ /____/  \__/  /_/   \____/ /_/ /_/        /_____/   
+-#                                                                            
++#   / / / / / / / / / _ \  / ___/ / __/  / /  / __ \  / __ \         /___ \
++#  / /_/ / / /_/ / /  __/ (__  ) / /_   / /  / /_/ / / / / /        ____/ /
++#  \___\_\ \__,_/  \___/ /____/  \__/  /_/   \____/ /_/ /_/        /_____/
++#
+ #  Question 5
+ ################################################################################
+ #
+ # Instructions:
+-# This questions continues to use the database we worked with in Question 4. In 
++# This questions continues to use the database we worked with in Question 4. In
+ # this question, we will made some modifications ot the table.
+ 
+ # Part 5.A:
+@@ -19,19 +19,20 @@
+ # vegetarian integer
+ 
+ sql_create_favorite_foods = """
+-
+-Your SQL here.
+-
++CREATE TABLE favorite_foods (
++    food_id INTEGER,
++    name TEXT NOT NULL,
++    vegetarian INTEGER NOT NULL
++);
+ """
+ 
+ # Part 5.B:
+ # Alter the animals and people tables by adding a new column to each called 'favorite_food_id'
+-# The test suite will verify the new changes by inserting some new rows. 
++# The test suite will verify the new changes by inserting some new rows.
+ 
+ sql_alter_tables_with_favorite_food = """
+-
+-Your SQL here.
+-
++ALTER TABLE animals ADD COLUMN favorite_food_id INTEGER;
++ALTER TABLE people ADD COLUMN favorite_food_id INTEGER;
+ """
+ 
+ # Part 5.C:
+@@ -39,7 +40,11 @@ Your SQL here.
+ # THe output should be a list of tuples in the format: (<pet name>, <food name>)
+ 
+ sql_select_all_vegetarian_pets = """
+-
+-Your SQL here.
+-
+-"""
+\ No newline at end of file
++SELECT
++    animals.name,
++    favorite_foods.name
++FROM animals
++INNER JOIN favorite_foods
++ON animals.favorite_food_id = favorite_foods.food_id
++WHERE favorite_foods.vegetarian = 1;
++"""
+diff --git a/part2/src/main/java/org/velezreyes/quiz/question6/Drink.java b/part2/src/main/java/org/velezreyes/quiz/question6/Drink.java
+index 61c1fdd..11d1755 100644
+--- a/part2/src/main/java/org/velezreyes/quiz/question6/Drink.java
++++ b/part2/src/main/java/org/velezreyes/quiz/question6/Drink.java
+@@ -1,7 +1,10 @@
+ package org.velezreyes.quiz.question6;
+ 
+ public interface Drink {
++
+   public String getName();
+ 
++  public double getPrice();
++
+   public boolean isFizzy();
+-}
+\ No newline at end of file
++}
+diff --git a/part2/src/main/java/org/velezreyes/quiz/question6/VendingMachine.java b/part2/src/main/java/org/velezreyes/quiz/question6/VendingMachine.java
+index 3f92825..fa0552d 100644
+--- a/part2/src/main/java/org/velezreyes/quiz/question6/VendingMachine.java
++++ b/part2/src/main/java/org/velezreyes/quiz/question6/VendingMachine.java
+@@ -5,4 +5,4 @@ public interface VendingMachine {
+   public void insertQuarter();
+ 
+   public Drink pressButton(String name) throws NotEnoughMoneyException, UnknownDrinkException;
+-}
+\ No newline at end of file
++}
+diff --git a/part2/src/main/java/org/velezreyes/quiz/question6/VendingMachineImpl.java b/part2/src/main/java/org/velezreyes/quiz/question6/VendingMachineImpl.java
+index 85742c4..83a96d9 100644
+--- a/part2/src/main/java/org/velezreyes/quiz/question6/VendingMachineImpl.java
++++ b/part2/src/main/java/org/velezreyes/quiz/question6/VendingMachineImpl.java
+@@ -1,9 +1,41 @@
+ package org.velezreyes.quiz.question6;
+ 
+-public class VendingMachineImpl {
++public class VendingMachineImpl implements VendingMachine {
++  private double moneyInserted;
++
++  public VendingMachineImpl() {
++    this.moneyInserted = 0;
++  }
++
++  @Override
++  public void insertQuarter() {
++    this.moneyInserted += 0.25;
++  }
++
++  @Override
++  public Drink pressButton(String name) throws NotEnoughMoneyException, UnknownDrinkException {
++    Drink pressedDrink;
++    switch (name) {
++      case "ScottCola":
++        pressedDrink = new ScottColaDrink();
++        break;
++      case "KarenTea":
++        pressedDrink = new KarenTeaDrink();
++        break;
++      default:
++        throw new UnknownDrinkException();
++    }
++
++    this.processDrinkTransaction(pressedDrink.getPrice());
++    return pressedDrink;
++  }
++
++  private void processDrinkTransaction(double drinkPrice) throws NotEnoughMoneyException {
++    if (this.moneyInserted < drinkPrice) throw new NotEnoughMoneyException();
++    this.moneyInserted -= drinkPrice;
++  }
+ 
+   public static VendingMachine getInstance() {
+-    // Fix me!
+-    return null;
++    return new VendingMachineImpl();
+   }
+ }
